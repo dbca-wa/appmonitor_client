@@ -16,6 +16,9 @@ class Command(BaseCommand):
         APP_MONITOR_URL=decouple.config("APP_MONITOR_URL", default="")
         APP_MONITOR_PLATFORM_ID=decouple.config("APP_MONITOR_PLATFORM_ID", default="")
         APP_MONITOR_APIKEY=decouple.config("APP_MONITOR_APIKEY", default="")
+        APP_MONITOR_APIKEY=decouple.config("APP_MONITOR_AUTH_ENABLED", default="")
+        APP_MONITOR_APIKEY=decouple.config("APP_MONITOR_AUTH_USER", default="")
+        APP_MONITOR_APIKEY=decouple.config("APP_MONITOR_AUTH_PASS", default="")
 
         # Retreive Operating System Information
         system_os_file = '/etc/os-release'
