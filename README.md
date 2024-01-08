@@ -1,4 +1,5 @@
-# appmonitor_client
+# App Monitor client.
+Purpose of this module is to extract system python package versions, System OS/Version and Django version.
 
 # Requirements
 - Python (3.x.x)
