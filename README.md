@@ -15,3 +15,11 @@ These configuration settings provided by the appmonitor system.
     APP_MONITOR_AUTH_ENABLED=False
     APP_MONITOR_AUTH_USER=
     APP_MONITOR_AUTH_PASS=
+
+# Management Script
+
+```
+[appmonitor_client]   
+    appmonitor_check   
+
+```
