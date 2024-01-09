@@ -23,3 +23,17 @@ These configuration settings provided by the appmonitor system.
     appmonitor_check   
 
 ```
+
+# Python dependencies 
+
+```
+    python-decouple==3.8
+```
+
+# django INSTALLED_APPS
+
+```
+INSTALLED_APPS = [
+    'appmonitor_client'
+]
+```
