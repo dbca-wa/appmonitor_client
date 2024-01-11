@@ -37,3 +37,20 @@ INSTALLED_APPS = [
     'appmonitor_client'
 ]
 ```
+
+# Cron job
+
+```
+CRON_CLASSES = [
+    'appmonitor_client.cron.CronJobAppMonitorClient',
+]
+
+```
+# Management Script 
+
+This management script is called by the cron job sync the system with the App Monitor.   
+
+```
+python manage.py appmonitor_check
+
+```
