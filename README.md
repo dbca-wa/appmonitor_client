@@ -24,11 +24,20 @@ These configuration settings provided by the appmonitor system.
 
 ```
 
-# Python dependencies 
+# Python (PIP) dependencies 
 
 ```
     python-decouple==3.8
+    git+https://github.com/dbca-wa/appmonitor_client.git#egg=appmonitor_client
 ```
+# Python (Poetry) dependencies 
+
+```
+    python-decouple = "^3.8"
+    appmonitor_client = {git = "https://github.com/dbca-wa/appmonitor_client.git", rev="main"}
+```
+
+
 
 # django INSTALLED_APPS
 
