@@ -15,7 +15,7 @@ class CronJobAppMonitorClient(django_cron.CronJobBase):
     """Cron Job for the Catalogue Scanner."""
     RUN_ON_DAYS = [1,2,3,4,5]
     RUN_AT_TIMES = ['9:15']
-    schedule = django_cron.Schedule(run_on_days=RUN_ON_DAYS,run_at_times=RUN_AT_TIMES)
+    schedule = django_cron.Schedule(run_weekly_on_days=RUN_ON_DAYS,run_at_times=RUN_AT_TIMES)
     code = "appmonitor_client.appmonitor_check"
 
     def do(self) -> None:
