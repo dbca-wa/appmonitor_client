@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 class CronJobAppMonitorClient(django_cron.CronJobBase):
     """Cron Job for the Catalogue Scanner."""
     RUN_ON_DAYS = [1,2,3,4,5]
-    RUN_AT_TIMES = ['9:15']
+    RUN_AT_TIMES = ['8:15']
     dc = django_cron.Schedule()
     dc_items = dc.__dict__
     schedule = None
