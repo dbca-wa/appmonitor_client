@@ -9,6 +9,7 @@ import pkg_resources
 import decouple
 import subprocess
 import sys
+import getpass
 
 class Command(BaseCommand):
     help = 'Provide system platform information to appmonitor.'
@@ -16,7 +17,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         VERSION="1.0.3"
         print ("Running appmonitor check sync with version {}".format(VERSION))
-        platform_obj = {"system_info": {}}
+        platform_obj = {"system_info": {}, "debian_packages": {},"linux_system": {"linux_username": "", "linux_uid": None}}
+
+        platform_obj["linux_system"]["linux_uid"] = os.getuid()
+        platform_obj["linux_system"]["linux_username"] = getpass.getuser()
+        print (platform_obj)
+        sys.exit()
         APP_MONITOR_URL=decouple.config("APP_MONITOR_URL", default="")
         APP_MONITOR_PLATFORM_ID=decouple.config("APP_MONITOR_PLATFORM_ID", default="")
         APP_MONITOR_APIKEY=decouple.config("APP_MONITOR_APIKEY", default="")
