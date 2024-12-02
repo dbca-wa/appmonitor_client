@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='appmonitor_client',
-      version='1.6',
+      version='1.7',
       description='App Monitor Client',
       url='https://github.com/dbca-wa/appmonitor_client',
       author='Department of Biodiversity, Conservation and Attractions',
