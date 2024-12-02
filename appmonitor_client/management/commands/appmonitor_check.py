@@ -21,8 +21,7 @@ class Command(BaseCommand):
 
         platform_obj["linux_system"]["linux_uid"] = os.getuid()
         platform_obj["linux_system"]["linux_username"] = getpass.getuser()
-        print (platform_obj)
-        sys.exit()
+
         APP_MONITOR_URL=decouple.config("APP_MONITOR_URL", default="")
         APP_MONITOR_PLATFORM_ID=decouple.config("APP_MONITOR_PLATFORM_ID", default="")
         APP_MONITOR_APIKEY=decouple.config("APP_MONITOR_APIKEY", default="")
