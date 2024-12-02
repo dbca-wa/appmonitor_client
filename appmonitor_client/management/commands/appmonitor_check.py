@@ -7,12 +7,15 @@ import platform
 import django
 import pkg_resources
 import decouple
+import subprocess
 import sys
 
 class Command(BaseCommand):
     help = 'Provide system platform information to appmonitor.'
 
     def handle(self, *args, **options):
+        VERSION="1.0.3"
+        print ("Running appmonitor check sync with version {}".format(VERSION))
         platform_obj = {"system_info": {}}
         APP_MONITOR_URL=decouple.config("APP_MONITOR_URL", default="")
         APP_MONITOR_PLATFORM_ID=decouple.config("APP_MONITOR_PLATFORM_ID", default="")
@@ -55,6 +58,21 @@ class Command(BaseCommand):
             installed_packages_list = sorted(["%s==%s" % (i.key, i.version) for i in installed_packages])
             platform_obj["python_packages"] = installed_packages_list
 
+            # get debian packages
+            debian_packages=subprocess.check_output(["dpkg-query", "--show", "--showformat=${Package}-!-${Version}-!-${Architecture}\n"])
+            debian_packages_decoded = debian_packages.decode()            
+            debian_packages_lines = debian_packages_decoded.splitlines()
+            platform_debian_packages_array = []
+            for dp in debian_packages_lines:
+                dp_split = dp.split("-!-")
+                row = {}
+                row['package_name'] = dp_split[0]
+                row['package_version'] = dp_split[1]
+                row['package_architecture'] = dp_split[2]
+                platform_debian_packages_array.append(row)
+
+            platform_obj["debian_packages"] = platform_debian_packages_array
+            
             url = APP_MONITOR_URL+'/api/update-platform-information/'
             myobj = {'APP_MONITOR_PLATFORM_ID': APP_MONITOR_PLATFORM_ID, 'APP_MONITOR_APIKEY': APP_MONITOR_APIKEY, 'platform_obj': platform_obj}       
 
@@ -63,7 +81,7 @@ class Command(BaseCommand):
                 resp = requests.post(url, json = myobj, auth=auth_request)
             else:
                 resp = requests.post(url, json = myobj)
-
+                print (resp)
             print (resp.text)
         else:
             print ("Please provide a APP_MONITOR_URL environment variable.")
