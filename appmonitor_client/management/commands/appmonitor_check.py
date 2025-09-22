@@ -16,6 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         VERSION="1.8"
+        print (settings.BASE_DIR)
         print ("Running appmonitor check sync with version {}".format(VERSION))
         platform_obj = {"system_info": {}, "debian_packages": {},"linux_system": {"linux_username": "", "linux_uid": None}}
 
@@ -80,7 +81,7 @@ class Command(BaseCommand):
 
             # Find NodeJS packages if installed
             platform_npm_package_versions = []
-            for file_path in self.scan_dir('/app', {'__pycache__', '.git', 'private-media','media','cache','session_store', 'db'}):
+            for file_path in self.scan_dir(settings.BASE_DIR, {'__pycache__', '.git', 'private-media','media','cache','session_store', 'db'}):
                 if "package-lock.json" in file_path:                                        
                     platform_npm_package_versions = self.extract_versions_from_package_lock(file_path,platform_npm_package_versions)                            
             platform_obj["npm_packages"] = platform_npm_package_versions
