@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = 'Provide system platform information to appmonitor.'
 
     def handle(self, *args, **options):
-        VERSION="1.0.3"
+        VERSION="1.8"
         print ("Running appmonitor check sync with version {}".format(VERSION))
         platform_obj = {"system_info": {}, "debian_packages": {},"linux_system": {"linux_username": "", "linux_uid": None}}
 
@@ -77,6 +77,13 @@ class Command(BaseCommand):
                 platform_debian_packages_array.append(row)
 
             platform_obj["debian_packages"] = platform_debian_packages_array
+
+            # Find NodeJS packages if installed
+            platform_npm_package_versions = []
+            for file_path in self.scan_dir('/app', {'__pycache__', '.git', 'private-media','media','cache','session_store', 'db'}):
+                if "package-lock.json" in file_path:                                        
+                    platform_npm_package_versions = self.extract_versions_from_package_lock(file_path,platform_npm_package_versions)                            
+            platform_obj["npm_packages"] = platform_npm_package_versions
             
             url = APP_MONITOR_URL+'/api/update-platform-information/'
             myobj = {'APP_MONITOR_PLATFORM_ID': APP_MONITOR_PLATFORM_ID, 'APP_MONITOR_APIKEY': APP_MONITOR_APIKEY, 'platform_obj': platform_obj}       
@@ -90,3 +97,55 @@ class Command(BaseCommand):
             print (resp.text)
         else:
             print ("Please provide a APP_MONITOR_URL environment variable.")
+
+
+    def scan_dir(self,path, excluded_dirs):
+        with os.scandir(path) as it:
+            for entry in it:
+                if entry.is_dir(follow_symlinks=False):
+                    if entry.name not in excluded_dirs:
+                        yield from self.scan_dir(entry.path, excluded_dirs)
+                elif entry.is_file():
+                    yield entry.path
+
+
+
+
+    def extract_versions_from_package_lock(self,filepath="package-lock.json",versions=[]):
+        """
+        Extracts a list of package names and their versions from a package-lock.json file.
+
+        Args:
+            filepath (str): The path to the package-lock.json file.
+
+        Returns:
+            list: A list of dictionaries, where each dictionary contains 'name' and 'version'
+                for a package. Returns an empty list if the file is not found or invalid.
+        """
+        print ("Extracting NPM versions from {}".format(filepath))
+        
+        try:
+            with open(filepath, 'r') as f:
+                data = json.load(f)
+
+            # The structure of package-lock.json can vary slightly with lockfileVersion.
+            # For lockfileVersion 2 and 3, 'packages' is the main key.
+            # For lockfileVersion 1, 'dependencies' is the main key.
+            if 'packages' in data:
+                for package_path, details in data['packages'].items():
+                    if package_path:  # Exclude the root project entry
+                        package_name = package_path.split('node_modules/')[-1]
+                        if 'version' in details:
+                            versions.append({'name': package_name, 'version': details['version'], 'source_file': filepath})
+            elif 'dependencies' in data: # For older lockfileVersion 1
+                for package_name, details in data['dependencies'].items():
+                    if 'version' in details:
+                        versions.append({'name': package_name, 'version': details['version'], 'source_file': filepath})
+
+        except FileNotFoundError:
+            print(f"Error: The file '{filepath}' was not found.")
+        except json.JSONDecodeError:
+            print(f"Error: Could not decode JSON from '{filepath}'. Ensure it's a valid JSON file.")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+        return versions
